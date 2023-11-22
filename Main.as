@@ -52,7 +52,7 @@ void Render() {
         return;
 
     int flags = UI::WindowFlags::NoTitleBar |
-                      UI::WindowFlags::AlwaysAutoResize;
+                UI::WindowFlags::AlwaysAutoResize;
 
     UI::Begin("ExitMap", flags);
         if (UI::Button(Icons::Times + " Exit Map"))
