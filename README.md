@@ -3,6 +3,9 @@
 ![Version](https://img.shields.io/badge/dynamic/json?query=version&url=https%3A%2F%2Fopenplanet.dev%2Fapi%2Fplugin%2F458&label=Version&color=red)
 ![Game Trackmania](https://img.shields.io/badge/Game-Trackmania-blue)
 ![Game Maniaplanet](https://img.shields.io/badge/Game-Maniaplanet_4-blue)
+
 # Exit Map
 
 If you want to leave a game, you currently need to do this through the pause menu. However, pausing also loads downloaded items (i.e. car skins when on a server), which can lag the game for a few seconds. This plugin lets you go back to the main menu, bypassing the pause menu.
+
+![image](images/exit-map.png)
