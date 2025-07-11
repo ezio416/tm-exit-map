@@ -1,5 +1,5 @@
 // c 2023-11-22
-// m 2023-11-22
+// m 2025-07-10
 
 enum ExitStyle {
     Button,
@@ -12,68 +12,70 @@ bool S_Enabled = true;
 [Setting category="General" name="Style"]
 ExitStyle S_Style = ExitStyle::Button;
 
-[Setting category="General" name="Show/hide with game UI" description="only applies to button"]
+[Setting category="General" name="Show/hide with game UI" if="S_Style Button"]
 bool S_HideWithGame = true;
 
-[Setting category="General" name="Show/hide with Openplanet UI" description="only applies to button"]
+[Setting category="General" name="Show/hide with Openplanet UI" if="S_Style Button"]
 bool S_HideWithOP = false;
 
-bool renderButton = false;
-bool renderMenu = false;
-
-void Main() {
-    while (true) {
-        renderButton = S_Style == ExitStyle::Button;
-        renderMenu = S_Style == ExitStyle::Menu;
-        yield();
-    }
-}
-
-void RenderMenu() {
-    if (UI::MenuItem(Icons::Times + " Exit Map", "", S_Enabled))
-        S_Enabled = !S_Enabled;
-}
-
 void Render() {
-    if (
-        !S_Enabled ||
-        renderMenu ||
-        (S_HideWithGame && !UI::IsGameUIVisible()) ||
-        (S_HideWithOP && !UI::IsOverlayShown())
-    )
+    if (false
+        or !S_Enabled
+        or S_Style == ExitStyle::Menu
+        or (S_HideWithGame && !UI::IsGameUIVisible())
+        or (S_HideWithOP && !UI::IsOverlayShown())
+#if TMNEXT || MP4
+        or GetApp().RootMap is null
+#elif TURBO
+        or GetApp().Challenge is null
+#endif
+    ) {
         return;
+    }
 
-    CTrackMania@ app = cast<CTrackMania@>(GetApp());
-
-    CGameCtnChallenge@ map = cast<CGameCtnChallenge@>(app.RootMap);
-    if (map is null)
-        return;
-
-    int flags = UI::WindowFlags::NoTitleBar |
-                UI::WindowFlags::AlwaysAutoResize;
-
-    UI::Begin("ExitMap", flags);
-        if (UI::Button(Icons::Times + " Exit Map"))
-            app.BackToMainMenu();
+    if (UI::Begin("ExitMap", UI::WindowFlags::NoTitleBar | UI::WindowFlags::AlwaysAutoResize)) {
+        if (UI::Button(Icons::Times + " Exit Map")) {
+            Exit();
+        }
+    }
     UI::End();
 }
 
+void RenderMenu() {
+    if (UI::MenuItem(Icons::Times + " Exit Map", "", S_Enabled)) {
+        S_Enabled = !S_Enabled;
+    }
+}
+
 void RenderMenuMain() {
-    if (
-        !S_Enabled ||
-        renderButton
-    )
+    if (false
+        or !S_Enabled
+        or S_Style == ExitStyle::Button
+#if TMNEXT || MP4
+        or GetApp().RootMap is null
+#elif TURBO
+        or GetApp().Challenge is null
+#endif
+    ) {
         return;
-
-    CTrackMania@ app = cast<CTrackMania@>(GetApp());
-
-    CGameCtnChallenge@ map = cast<CGameCtnChallenge@>(app.RootMap);
-    if (map is null)
-        return;
+    }
 
     if (UI::BeginMenu(Icons::Times + " Exit Map")) {
-        if (UI::MenuItem("Exit"))
-            app.BackToMainMenu();
+        if (UI::MenuItem("Exit")) {
+            Exit();
+        }
         UI::EndMenu();
     }
+}
+
+void Exit() {
+    auto App = cast<CTrackMania>(GetApp());
+
+#if TMNEXT || MP4
+    if (App.Network.PlaygroundClientScriptAPI.IsInGameMenuDisplayed) {
+        App.Network.PlaygroundInterfaceScriptHandler.CloseInGameMenu(CGameScriptHandlerPlaygroundInterface::EInGameMenuResult::Quit);
+    }
+#endif
+
+    App.BackToMainMenu();
 }
