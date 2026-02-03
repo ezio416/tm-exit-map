@@ -19,8 +19,14 @@ void Render() {
     if (false
         or !S_Enabled
         or S_Style == ExitStyle::Menu
-        or (S_HideWithGame && !UI::IsGameUIVisible())
-        or (S_HideWithOP && !UI::IsOverlayShown())
+        or (true
+            and S_HideWithGame
+            and !UI::IsGameUIVisible()
+        )
+        or (true
+            and S_HideWithOP
+            and !UI::IsOverlayShown()
+        )
 #if TMNEXT || MP4
         or GetApp().RootMap is null
 #elif TURBO
@@ -70,7 +76,9 @@ void Exit() {
 
 #if TMNEXT || MP4
     if (App.Network.PlaygroundClientScriptAPI.IsInGameMenuDisplayed) {
-        App.Network.PlaygroundInterfaceScriptHandler.CloseInGameMenu(CGameScriptHandlerPlaygroundInterface::EInGameMenuResult::Quit);
+        App.Network.PlaygroundInterfaceScriptHandler.CloseInGameMenu(
+            CGameScriptHandlerPlaygroundInterface::EInGameMenuResult::Quit
+        );
     }
 #endif
 
