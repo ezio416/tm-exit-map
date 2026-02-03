@@ -1,6 +1,3 @@
-// c 2023-11-22
-// m 2025-07-10
-
 enum ExitStyle {
     Button,
     Menu
