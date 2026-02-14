@@ -27,11 +27,7 @@ void Render() {
             and S_HideWithOP
             and !UI::IsOverlayShown()
         )
-#if TMNEXT || MP4
-        or GetApp().RootMap is null
-#elif TURBO
-        or GetApp().Challenge is null
-#endif
+        or GetMap() is null
     ) {
         return;
     }
@@ -54,11 +50,7 @@ void RenderMenuMain() {
     if (false
         or !S_Enabled
         or S_Style == ExitStyle::Button
-#if TMNEXT || MP4
-        or GetApp().RootMap is null
-#elif TURBO
-        or GetApp().Challenge is null
-#endif
+        or GetMap() is null
     ) {
         return;
     }
@@ -82,5 +74,17 @@ void Exit() {
     }
 #endif
 
+#if TMNEXT || MP4 || TURBO
     App.BackToMainMenu();
+#elif FOREVER
+    ;  // TODO
+#endif
+}
+
+CGameCtnChallenge@ GetMap() {
+#if TMNEXT || MP4
+    return GetApp().RootMap;
+#elif TURBO || FOREVER
+    return GetApp().Challenge
+#endif
 }
