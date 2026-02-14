@@ -19,6 +19,7 @@ void Render() {
     if (false
         or !S_Enabled
         or S_Style == ExitStyle::Menu
+        or GetMap() is null
         or (true
             and S_HideWithGame
             and !UI::IsGameUIVisible()
@@ -27,16 +28,21 @@ void Render() {
             and S_HideWithOP
             and !UI::IsOverlayShown()
         )
-        or GetMap() is null
     ) {
         return;
     }
 
-    if (UI::Begin("ExitMap", UI::WindowFlags::NoTitleBar | UI::WindowFlags::AlwaysAutoResize)) {
+    const int flags = UI::GetDefaultWindowFlags()
+        | UI::WindowFlags::NoTitleBar
+        | UI::WindowFlags::AlwaysAutoResize
+    ;
+
+    if (UI::Begin("ExitMap", flags)) {
         if (UI::Button(Icons::Times + " Exit Map")) {
             Exit();
         }
     }
+
     UI::End();
 }
 
